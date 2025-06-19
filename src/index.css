@@ -103,11 +103,19 @@
   }
 }
 
-/* Print styles for PDF generation */
+/* Enhanced Print styles for PDF generation */
 @media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
   body {
     background: white !important;
     color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
   #pdf-content {
@@ -115,18 +123,91 @@
     border-radius: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
   }
   
   /* Hide elements that shouldn't appear in PDF */
-  button,
   .no-print {
     display: none !important;
   }
   
+  /* Ensure all gradients and colors are preserved */
+  .bg-gradient-to-r {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .bg-gradient-to-br {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Force gradient colors to print */
+  .print\\:bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .print\\:from-blue-600 {
+    --tw-gradient-from: #2563eb !important;
+    --tw-gradient-to: rgb(37 99 235 / 0) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  
+  .print\\:to-purple-600 {
+    --tw-gradient-to: #9333ea !important;
+  }
+  
+  .print\\:from-blue-100 {
+    --tw-gradient-from: #dbeafe !important;
+    --tw-gradient-to: rgb(219 234 254 / 0) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  
+  .print\\:to-blue-200 {
+    --tw-gradient-to: #bfdbfe !important;
+  }
+  
+  .print\\:from-green-100 {
+    --tw-gradient-from: #dcfce7 !important;
+    --tw-gradient-to: rgb(220 252 231 / 0) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  
+  .print\\:to-green-200 {
+    --tw-gradient-to: #bbf7d0 !important;
+  }
+  
+  .print\\:from-purple-100 {
+    --tw-gradient-from: #f3e8ff !important;
+    --tw-gradient-to: rgb(243 232 255 / 0) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  
+  .print\\:to-purple-200 {
+    --tw-gradient-to: #e9d5ff !important;
+  }
+  
+  .print\\:from-orange-100 {
+    --tw-gradient-from: #fed7aa !important;
+    --tw-gradient-to: rgb(254 215 170 / 0) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  
+  .print\\:to-orange-200 {
+    --tw-gradient-to: #fde68a !important;
+  }
+  
   /* Ensure charts and images print correctly */
   .recharts-wrapper {
-    print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   
   /* Page break control */
@@ -136,6 +217,65 @@
   
   h1, h2, h3 {
     page-break-after: avoid;
+  }
+  
+  /* Ensure text colors are preserved */
+  .text-white {
+    color: white !important;
+  }
+  
+  .text-blue-600 {
+    color: #2563eb !important;
+  }
+  
+  .text-green-600 {
+    color: #16a34a !important;
+  }
+  
+  .text-purple-600 {
+    color: #9333ea !important;
+  }
+  
+  .text-orange-600 {
+    color: #ea580c !important;
+  }
+  
+  .text-blue-800 {
+    color: #1e40af !important;
+  }
+  
+  .text-green-800 {
+    color: #166534 !important;
+  }
+  
+  .text-purple-800 {
+    color: #6b21a8 !important;
+  }
+  
+  .text-orange-800 {
+    color: #9a3412 !important;
+  }
+  
+  .text-gray-800 {
+    color: #1f2937 !important;
+  }
+  
+  .text-gray-700 {
+    color: #374151 !important;
+  }
+  
+  .text-gray-600 {
+    color: #4b5563 !important;
+  }
+  
+  .text-gray-500 {
+    color: #6b7280 !important;
+  }
+  
+  /* Remove any page margins */
+  @page {
+    margin: 0;
+    size: A4;
   }
 }
 
