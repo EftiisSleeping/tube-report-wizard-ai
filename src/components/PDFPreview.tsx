@@ -2,9 +2,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Download, ArrowLeft, FileText } from "lucide-react";
 import { AuditData } from "@/pages/Index";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
@@ -19,27 +18,20 @@ const PDFPreview = ({ auditData, onBack }: PDFPreviewProps) => {
 
   const { channelData, videoData, videoComment } = auditData;
 
-  // Prepare chart data
-  const videoPerformanceData = videoData.map((video, index) => ({
-    name: `Video ${index + 1}`,
+  // Prepare chart data - filter out videos with no data
+  const validVideoData = videoData.filter(video => video.views || video.likes || video.comments);
+  
+  const videoPerformanceData = validVideoData.map((video, index) => ({
+    name: video.title || `Video ${index + 1}`,
     views: parseInt(video.views.replace(/[^\d]/g, '')) || 0,
     likes: parseInt(video.likes.replace(/[^\d]/g, '')) || 0,
     comments: parseInt(video.comments.replace(/[^\d]/g, '')) || 0,
   }));
 
-  const seoScoreData = videoData.map((video, index) => ({
-    name: `Video ${index + 1}`,
+  const seoScoreData = validVideoData.map((video, index) => ({
+    name: video.title || `Video ${index + 1}`,
     score: parseInt(video.seoScore.replace(/[^\d]/g, '')) || 0,
   }));
-
-  const engagementData = videoData.map((video, index) => {
-    const views = parseInt(video.views.replace(/[^\d]/g, '')) || 1;
-    const likes = parseInt(video.likes.replace(/[^\d]/g, '')) || 0;
-    return {
-      name: `Video ${index + 1}`,
-      engagement: ((likes / views) * 100).toFixed(2),
-    };
-  });
 
   const pieData = [
     { name: 'Views', value: 60, color: '#3B82F6' },
@@ -47,15 +39,13 @@ const PDFPreview = ({ auditData, onBack }: PDFPreviewProps) => {
     { name: 'Comments', value: 15, color: '#F59E0B' },
   ];
 
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-
   const handleDownload = () => {
+    // Update the audit data with final comment before printing
+    const updatedAuditData = { ...auditData, finalComment };
+    console.log('Generating PDF with data:', updatedAuditData);
+    
+    // Trigger print dialog
     window.print();
-  };
-
-  const formatNumber = (num: string) => {
-    const cleanNum = num.replace(/[^\d.]/g, '');
-    return new Intl.NumberFormat().format(parseInt(cleanNum) || 0);
   };
 
   return (
@@ -88,7 +78,7 @@ const PDFPreview = ({ auditData, onBack }: PDFPreviewProps) => {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-4xl font-bold mb-2">YouTube Channel Audit Report</h1>
-                  <p className="text-xl opacity-90">{channelData.channelName}</p>
+                  <p className="text-xl opacity-90">{channelData.channelName || 'Channel Name Not Provided'}</p>
                 </div>
                 {channelData.channelLogo && (
                   <img 
@@ -109,45 +99,53 @@ const PDFPreview = ({ auditData, onBack }: PDFPreviewProps) => {
                 </h2>
                 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-                    <h3 className="font-semibold text-blue-800">Total Subscribers</h3>
-                    <p className="text-2xl font-bold text-blue-600">{channelData.totalSubscribers}</p>
-                  </Card>
+                  {channelData.totalSubscribers && (
+                    <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                      <h3 className="font-semibold text-blue-800">Total Subscribers</h3>
+                      <p className="text-2xl font-bold text-blue-600">{channelData.totalSubscribers}</p>
+                    </Card>
+                  )}
                   
-                  <Card className="p-4 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-                    <h3 className="font-semibold text-green-800">Total Views</h3>
-                    <p className="text-2xl font-bold text-green-600">{channelData.totalViews}</p>
-                  </Card>
+                  {channelData.totalViews && (
+                    <Card className="p-4 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                      <h3 className="font-semibold text-green-800">Total Views</h3>
+                      <p className="text-2xl font-bold text-green-600">{channelData.totalViews}</p>
+                    </Card>
+                  )}
                   
-                  <Card className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-                    <h3 className="font-semibold text-purple-800">Total Videos</h3>
-                    <p className="text-2xl font-bold text-purple-600">{channelData.totalVideos}</p>
-                  </Card>
+                  {channelData.totalVideos && (
+                    <Card className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                      <h3 className="font-semibold text-purple-800">Total Videos</h3>
+                      <p className="text-2xl font-bold text-purple-600">{channelData.totalVideos}</p>
+                    </Card>
+                  )}
                   
-                  <Card className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-                    <h3 className="font-semibold text-orange-800">Channel Age</h3>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {new Date().getFullYear() - new Date(channelData.channelCreateDate).getFullYear()}y
-                    </p>
-                  </Card>
+                  {channelData.channelCreateDate && (
+                    <Card className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+                      <h3 className="font-semibold text-orange-800">Channel Age</h3>
+                      <p className="text-2xl font-bold text-orange-600">
+                        {new Date().getFullYear() - new Date(channelData.channelCreateDate).getFullYear()}y
+                      </p>
+                    </Card>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <Card className="p-4">
                     <h4 className="font-semibold mb-2">Channel Details</h4>
                     <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">Country:</span> {channelData.country}</p>
-                      <p><span className="font-medium">Niche:</span> {channelData.niche}</p>
-                      <p><span className="font-medium">Created:</span> {new Date(channelData.channelCreateDate).toLocaleDateString()}</p>
-                      <p><span className="font-medium">Channel Link:</span> {channelData.channelLink}</p>
+                      {channelData.country && <p><span className="font-medium">Country:</span> {channelData.country}</p>}
+                      {channelData.niche && <p><span className="font-medium">Niche:</span> {channelData.niche}</p>}
+                      {channelData.channelCreateDate && <p><span className="font-medium">Created:</span> {new Date(channelData.channelCreateDate).toLocaleDateString()}</p>}
+                      {channelData.channelLink && <p><span className="font-medium">Channel Link:</span> {channelData.channelLink}</p>}
                     </div>
                   </Card>
                   
                   <Card className="p-4">
                     <h4 className="font-semibold mb-2">30-Day Performance</h4>
                     <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">New Views:</span> {channelData.last30DayViews}</p>
-                      <p><span className="font-medium">New Subscribers:</span> {channelData.last30DaySubscribers}</p>
+                      {channelData.last30DayViews && <p><span className="font-medium">New Views:</span> {channelData.last30DayViews}</p>}
+                      {channelData.last30DaySubscribers && <p><span className="font-medium">New Subscribers:</span> {channelData.last30DaySubscribers}</p>}
                     </div>
                   </Card>
                 </div>
@@ -160,86 +158,92 @@ const PDFPreview = ({ auditData, onBack }: PDFPreviewProps) => {
                 )}
               </section>
 
-              {/* Video Performance Charts */}
-              <section>
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">Video Performance Analytics</h2>
-                
-                <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                  <Card className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">Views vs Engagement</h3>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart data={videoPerformanceData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Bar dataKey="views" fill="#3B82F6" />
-                        <Bar dataKey="likes" fill="#10B981" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </Card>
+              {/* Video Performance Charts - Only show if we have video data */}
+              {validVideoData.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6">Video Performance Analytics</h2>
                   
-                  <Card className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">SEO Performance</h3>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <LineChart data={seoScoreData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis domain={[0, 100]} />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="score" stroke="#8B5CF6" strokeWidth={3} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </Card>
-                </div>
+                  <div className="grid lg:grid-cols-2 gap-6 mb-6">
+                    {videoPerformanceData.length > 0 && (
+                      <Card className="p-6">
+                        <h3 className="text-lg font-semibold mb-4">Views vs Engagement</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <BarChart data={videoPerformanceData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="views" fill="#3B82F6" />
+                            <Bar dataKey="likes" fill="#10B981" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </Card>
+                    )}
+                    
+                    {seoScoreData.some(item => item.score > 0) && (
+                      <Card className="p-6">
+                        <h3 className="text-lg font-semibold mb-4">SEO Performance</h3>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <LineChart data={seoScoreData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis domain={[0, 100]} />
+                            <Tooltip />
+                            <Line type="monotone" dataKey="score" stroke="#8B5CF6" strokeWidth={3} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </Card>
+                    )}
+                  </div>
 
-                <div className="grid lg:grid-cols-3 gap-6">
-                  <Card className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">Engagement Distribution</h3>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <PieChart>
-                        <Pie
-                          data={pieData}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={60}
-                          dataKey="value"
-                        >
-                          {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </Card>
-                  
-                  <Card className="p-6 lg:col-span-2">
-                    <h3 className="text-lg font-semibold mb-4">Latest Videos</h3>
-                    <div className="space-y-3">
-                      {videoData.slice(0, 3).map((video, index) => (
-                        <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                          <div className="flex-1">
-                            <p className="font-medium text-sm truncate">{video.title || `Video ${index + 1}`}</p>
-                            <p className="text-xs text-gray-500">{video.publishDate}</p>
+                  <div className="grid lg:grid-cols-3 gap-6">
+                    <Card className="p-6">
+                      <h3 className="text-lg font-semibold mb-4">Engagement Distribution</h3>
+                      <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                          <Pie
+                            data={pieData}
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={60}
+                            dataKey="value"
+                          >
+                            {pieData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </Card>
+                    
+                    <Card className="p-6 lg:col-span-2">
+                      <h3 className="text-lg font-semibold mb-4">Latest Videos</h3>
+                      <div className="space-y-3">
+                        {validVideoData.slice(0, 3).map((video, index) => (
+                          <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                            <div className="flex-1">
+                              <p className="font-medium text-sm truncate">{video.title || `Video ${index + 1}`}</p>
+                              <p className="text-xs text-gray-500">{video.publishDate}</p>
+                            </div>
+                            <div className="text-right text-sm">
+                              {video.views && <p className="font-semibold text-blue-600">{video.views} views</p>}
+                              {video.likes && <p className="text-gray-500">{video.likes} likes</p>}
+                            </div>
                           </div>
-                          <div className="text-right text-sm">
-                            <p className="font-semibold text-blue-600">{video.views} views</p>
-                            <p className="text-gray-500">{video.likes} likes</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
-                </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
 
-                {videoComment && (
-                  <Card className="p-6 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
-                    <h4 className="font-semibold text-green-800 mb-2">Video Performance Analysis</h4>
-                    <p className="text-gray-700">{videoComment}</p>
-                  </Card>
-                )}
-              </section>
+                  {videoComment && (
+                    <Card className="p-6 bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+                      <h4 className="font-semibold text-green-800 mb-2">Video Performance Analysis</h4>
+                      <p className="text-gray-700">{videoComment}</p>
+                    </Card>
+                  )}
+                </section>
+              )}
 
               {/* Final Comments Section */}
               {finalComment && (

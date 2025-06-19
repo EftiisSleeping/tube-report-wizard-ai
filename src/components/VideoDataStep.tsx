@@ -38,18 +38,8 @@ const VideoDataStep = ({ initialData, initialComment, onComplete, onBack }: Vide
     setComment(randomComment);
   };
 
-  const isFormValid = () => {
-    return videos.every(video => 
-      video.title.trim() !== '' && 
-      video.views.trim() !== '' && 
-      video.publishDate.trim() !== ''
-    );
-  };
-
   const handleSubmit = () => {
-    if (isFormValid()) {
-      onComplete(videos, comment);
-    }
+    onComplete(videos, comment);
   };
 
   return (
@@ -70,7 +60,7 @@ const VideoDataStep = ({ initialData, initialComment, onComplete, onBack }: Vide
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div>
-                  <Label className="text-white">Video Title *</Label>
+                  <Label className="text-white">Video Title</Label>
                   <Input
                     value={video.title}
                     onChange={(e) => handleVideoChange(index, 'title', e.target.value)}
@@ -80,7 +70,7 @@ const VideoDataStep = ({ initialData, initialComment, onComplete, onBack }: Vide
                 </div>
                 
                 <div>
-                  <Label className="text-white">Views *</Label>
+                  <Label className="text-white">Views</Label>
                   <Input
                     value={video.views}
                     onChange={(e) => handleVideoChange(index, 'views', e.target.value)}
@@ -122,7 +112,7 @@ const VideoDataStep = ({ initialData, initialComment, onComplete, onBack }: Vide
                 </div>
                 
                 <div>
-                  <Label className="text-white">Publish Date *</Label>
+                  <Label className="text-white">Publish Date</Label>
                   <Input
                     type="date"
                     value={video.publishDate}
@@ -168,7 +158,6 @@ const VideoDataStep = ({ initialData, initialComment, onComplete, onBack }: Vide
         
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid()}
           className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-3 font-semibold"
         >
           Generate PDF Report

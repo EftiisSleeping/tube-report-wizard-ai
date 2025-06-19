@@ -47,20 +47,8 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
     handleInputChange('channelComment', randomComment);
   };
 
-  const isFormValid = () => {
-    const requiredFields: (keyof ChannelData)[] = [
-      'channelName', 'totalSubscribers', 'totalViews', 'channelLink', 
-      'country', 'niche', 'channelCreateDate', 'totalVideos', 
-      'last30DayViews', 'last30DaySubscribers'
-    ];
-    
-    return requiredFields.every(field => formData[field].trim() !== '');
-  };
-
   const handleSubmit = () => {
-    if (isFormValid()) {
-      onComplete(formData);
-    }
+    onComplete(formData);
   };
 
   return (
@@ -73,7 +61,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="channelName" className="text-white">Channel Name *</Label>
+            <Label htmlFor="channelName" className="text-white">Channel Name</Label>
             <Input
               id="channelName"
               value={formData.channelName}
@@ -110,7 +98,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="totalSubscribers" className="text-white">Total Subscribers *</Label>
+            <Label htmlFor="totalSubscribers" className="text-white">Total Subscribers</Label>
             <Input
               id="totalSubscribers"
               value={formData.totalSubscribers}
@@ -121,7 +109,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="totalViews" className="text-white">Total Views *</Label>
+            <Label htmlFor="totalViews" className="text-white">Total Views</Label>
             <Input
               id="totalViews"
               value={formData.totalViews}
@@ -132,7 +120,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="channelLink" className="text-white">Channel Link *</Label>
+            <Label htmlFor="channelLink" className="text-white">Channel Link</Label>
             <Input
               id="channelLink"
               value={formData.channelLink}
@@ -143,7 +131,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="country" className="text-white">Country *</Label>
+            <Label htmlFor="country" className="text-white">Country</Label>
             <Input
               id="country"
               value={formData.country}
@@ -156,7 +144,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="niche" className="text-white">Niche *</Label>
+            <Label htmlFor="niche" className="text-white">Niche</Label>
             <Input
               id="niche"
               value={formData.niche}
@@ -167,7 +155,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="channelCreateDate" className="text-white">Channel Created Date *</Label>
+            <Label htmlFor="channelCreateDate" className="text-white">Channel Created Date</Label>
             <Input
               id="channelCreateDate"
               type="date"
@@ -178,7 +166,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="totalVideos" className="text-white">Total Videos *</Label>
+            <Label htmlFor="totalVideos" className="text-white">Total Videos</Label>
             <Input
               id="totalVideos"
               value={formData.totalVideos}
@@ -189,7 +177,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="last30DayViews" className="text-white">Last 30 Day Views *</Label>
+            <Label htmlFor="last30DayViews" className="text-white">Last 30 Day Views</Label>
             <Input
               id="last30DayViews"
               value={formData.last30DayViews}
@@ -200,7 +188,7 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
           </div>
 
           <div>
-            <Label htmlFor="last30DaySubscribers" className="text-white">Last 30 Day Subscribers *</Label>
+            <Label htmlFor="last30DaySubscribers" className="text-white">Last 30 Day Subscribers</Label>
             <Input
               id="last30DaySubscribers"
               value={formData.last30DaySubscribers}
@@ -237,7 +225,6 @@ const ChannelInfoStep = ({ initialData, onComplete }: ChannelInfoStepProps) => {
       <div className="mt-8 flex justify-end">
         <Button
           onClick={handleSubmit}
-          disabled={!isFormValid()}
           className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-3 font-semibold"
         >
           Continue to Video Data
